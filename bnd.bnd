@@ -1,0 +1,4 @@
+Bundle-Name: Liferay7210_DummyDataCreator
+Bundle-SymbolicName: Liferay7210_DummyDataCreator
+Bundle-Version: 1.0.0
+-sources: true
