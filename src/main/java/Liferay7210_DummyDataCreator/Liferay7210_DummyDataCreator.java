@@ -203,8 +203,16 @@ public class Liferay7210_DummyDataCreator {
 		long myGroupId = GroupLocalServiceUtil.getGroup(companyId, siteName).getGroupId();
 		_log.info("myGroupId: " + myGroupId);
 		int currentDummyArticleCount = 0;
+		int currentArticleCount = 0;
 
-		if(JournalArticleLocalServiceUtil.getArticlesCount(myGroupId)>0) {
+		try {
+			currentArticleCount = JournalArticleLocalServiceUtil.getArticlesCount(myGroupId);
+		} catch (Exception e1) {
+//			We are going to ignore the nullpointerexception which occurs at a clean database:
+//			e1.printStackTrace();
+		}
+
+		if(currentArticleCount > 0) {
 			List<JournalArticle> journalArticles = JournalArticleLocalServiceUtil.getArticles(myGroupId, -1, -1);
 			for(JournalArticle thisArtice : journalArticles) {
 				if(thisArtice.getTitle().startsWith("dummy")) {
