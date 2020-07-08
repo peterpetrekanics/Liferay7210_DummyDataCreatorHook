@@ -18,7 +18,9 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
@@ -69,6 +71,12 @@ public class Liferay7210_DummyDataCreator {
 
 	@Reference
 	private UserLocalService _userLocalService;
+
+	@Reference
+	private DDMStructureLocalService _ddmstructureLocalService;
+
+	@Reference
+	private DDMTemplateLocalService _ddmtemplateLocalService;
 
 	// Liferay lifecycle service
 	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED)
@@ -205,6 +213,7 @@ public class Liferay7210_DummyDataCreator {
 
 		String siteName = "Guest";
 		long myGroupId = GroupLocalServiceUtil.getGroup(companyId, siteName).getGroupId();
+		long globalGroupId = GroupLocalServiceUtil.getGroup(companyId, companyId+"").getGroupId();
 		_log.info("myGroupId: " + myGroupId);
 		int currentDummyArticleCount = 0;
 		int currentArticleCount = 0;
@@ -234,6 +243,7 @@ public class Liferay7210_DummyDataCreator {
 			}
 		}
 		_log.info("currentDummyArticleCount: " + currentDummyArticleCount);
+		_log.info("_ddmstructureLocalService.getDDMStructuresCount: " + _ddmstructureLocalService.getDDMStructuresCount());
 
 		int articleNumber = 0;
 		for(int i = 1; i < basicWebContentCount + 1; i++){
@@ -245,14 +255,18 @@ public class Liferay7210_DummyDataCreator {
 			Map<Locale, String> descriptionMap = new HashMap<Locale, String>();
 			descriptionMap.put(Locale.US, "Description");
 
+			_log.info("_ddmstructureLocalService.getDDMStructuresCount: " + _ddmstructureLocalService.getDDMStructuresCount());
 			String content = "<ROOT></ROOT>";
+//			plainStructureCreator("no", companyId, 1);
 			String ddmStructureKey = "BASIC-WEB-CONTENT";
 			String ddmTemplateKey = "BASIC-WEB-CONTENT";
+//			String ddmStructureKey = _ddmstructureLocalService.getDDMStructureByUuidAndGroupId("b202515f-1372-0548-2c74-cd15d0aef46f", globalGroupId).getStructureKey();
+//			String ddmTemplateKey = _ddmtemplateLocalService.getDDMTemplates(0, 1).get(0).getTemplateKey();
 			ServiceContext serviceContext = new ServiceContext();
 			serviceContext.setAddGroupPermissions(true);
 			serviceContext.setAddGuestPermissions(true);
 			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
-			serviceContext.setScopeGroupId(myGroupId);
+			serviceContext.setScopeGroupId(globalGroupId);
 
 			long classNameId = 0;
 			long classPK = 0;
@@ -293,14 +307,20 @@ public class Liferay7210_DummyDataCreator {
 //				expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, reviewDateMonth,
 //				reviewDateDay, reviewDateYear, reviewDateHour, reviewDateMinute, neverReview, indexable, smallImage, smallImageURL,
 //				smallImageFile, images, articleURL, serviceContext);
-//			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, classNameId, classPK, articleId,
-//			autoArticleId, version, titleMap, descriptionMap, friendlyURLMap, content, ddmStructureKey, ddmTemplateKey,
-//			layoutUuid, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
-//			expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute,
-//			neverExpire, reviewDateMonth, reviewDateDay, reviewDateYear, reviewDateHour, reviewDateMinute, neverReview,
-//			indexable, smallImage, smallImageURL, smallImageFile, images, articleURL, serviceContext);
-			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, titleMap, descriptionMap, content,
-			ddmStructureKey, ddmTemplateKey, serviceContext);
+			try {
+				JournalArticleLocalServiceUtil.addArticle(creatorUserId, globalGroupId, folderId, classNameId, classPK, articleId,
+				autoArticleId, version, titleMap, descriptionMap, friendlyURLMap, content, ddmStructureKey, ddmTemplateKey,
+				layoutUuid, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
+				expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute,
+				neverExpire, reviewDateMonth, reviewDateDay, reviewDateYear, reviewDateHour, reviewDateMinute, neverReview,
+				indexable, smallImage, smallImageURL, smallImageFile, images, articleURL, serviceContext);
+			} catch (Exception e) {
+				JournalArticleLocalServiceUtil.addArticle(creatorUserId, globalGroupId, folderId, titleMap, descriptionMap, content,
+				ddmStructureKey, ddmTemplateKey, serviceContext);
+				_log.info(" * inside exception * ");
+			}
+//			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, titleMap, descriptionMap, content,
+//			ddmStructureKey, ddmTemplateKey, serviceContext);
 		}
 	}
 
