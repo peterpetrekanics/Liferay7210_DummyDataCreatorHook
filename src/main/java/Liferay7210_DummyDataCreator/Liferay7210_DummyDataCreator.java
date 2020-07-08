@@ -46,8 +46,12 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -245,9 +249,58 @@ public class Liferay7210_DummyDataCreator {
 			String ddmStructureKey = "BASIC-WEB-CONTENT";
 			String ddmTemplateKey = "BASIC-WEB-CONTENT";
 			ServiceContext serviceContext = new ServiceContext();
+			serviceContext.setAddGroupPermissions(true);
+			serviceContext.setAddGuestPermissions(true);
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
 			serviceContext.setScopeGroupId(myGroupId);
+
+			long classNameId = 0;
+			long classPK = 0;
+			String articleId = "";
+			boolean autoArticleId = true;
+			double version = 1.0;
+			String layoutUuid = "";
+			Calendar calendar = GregorianCalendar.getInstance();
+			int displayDateMonth = calendar.get(Calendar.MONTH);
+			int displayDateDay = calendar.get(Calendar.DAY_OF_MONTH);
+			int displayDateYear = calendar.get(Calendar.YEAR);
+			int displayDateHour = calendar.get(Calendar.HOUR_OF_DAY);
+			int displayDateMinute = calendar.get(Calendar.MINUTE);
+			int expirationDateMonth = -1;
+			int expirationDateDay = -1;
+			int expirationDateYear = -1;
+			int expirationDateHour = -1;
+			int expirationDateMinute = -1;
+			boolean neverExpire = true;
+			int reviewDateMonth = -1;
+			int reviewDateDay = -1;
+			int reviewDateYear = -1;
+			int reviewDateHour = -1;
+			int reviewDateMinute = -1;
+			boolean neverReview = true;
+			boolean indexable = true;
+			boolean smallImage = false;
+			String smallImageURL = "";
+			File smallFile = null;
+			Map<String, byte[]> images = Collections.emptyMap();
+			String articleURL = "";
+			File smallImageFile = null;
+			Map<Locale, String> friendlyURLMap = Collections.emptyMap();
+
+//			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, classNameId, classPK, articleId,
+//				autoArticleId, version, titleMap, descriptionMap, content, ddmStructureKey, ddmTemplateKey, layoutUuid,
+//				displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth,
+//				expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, reviewDateMonth,
+//				reviewDateDay, reviewDateYear, reviewDateHour, reviewDateMinute, neverReview, indexable, smallImage, smallImageURL,
+//				smallImageFile, images, articleURL, serviceContext);
+//			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, classNameId, classPK, articleId,
+//			autoArticleId, version, titleMap, descriptionMap, friendlyURLMap, content, ddmStructureKey, ddmTemplateKey,
+//			layoutUuid, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute,
+//			expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute,
+//			neverExpire, reviewDateMonth, reviewDateDay, reviewDateYear, reviewDateHour, reviewDateMinute, neverReview,
+//			indexable, smallImage, smallImageURL, smallImageFile, images, articleURL, serviceContext);
 			JournalArticleLocalServiceUtil.addArticle(creatorUserId, myGroupId, folderId, titleMap, descriptionMap, content,
-				ddmStructureKey, ddmTemplateKey, serviceContext);
+			ddmStructureKey, ddmTemplateKey, serviceContext);
 		}
 	}
 
